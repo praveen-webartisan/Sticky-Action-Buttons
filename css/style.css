@@ -1,0 +1,100 @@
+.sabs-container
+{
+	position: fixed;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	display: flex;
+	flex-direction: column;
+	z-index: 100;
+}
+
+.fab
+{
+	height: 56px;
+	width: 56px;
+	box-shadow: 0 3px 3px 0 rgb(0 0 0 / 14%), 0 1px 7px 0 rgb(0 0 0 / 12%), 0 3px 1px -1px rgb(0 0 0 / 20%);
+	cursor: pointer;
+	color: #fff;
+	border-radius: 50%;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 1.6rem;
+	background: #86bc42;
+	position: relative;
+	text-decoration: none;
+}
+
+.fab:hover, .fab:focus
+{
+	color: #fff;
+}
+
+.fab:active
+{
+	filter: brightness(85%);
+}
+
+.sabs-container > .fab:not(:last-child)
+{
+	margin-bottom: 10px;
+}
+
+.fab.sab-with-notification::before
+{
+	content: "1";
+	background: #f00;
+	height: 15px;
+	width: 15px;
+	font-size: 10px;
+	font-weight: bold;
+	border-radius: 50%;
+	position: absolute;
+	top: 0;
+	right: 0;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.fab.sab-whatsapp
+{
+	background: #4FCE5D;
+}
+
+.fab.sab-fb
+{
+	background: #4267B2;
+}
+
+.fab.sab-phone
+{
+	background: #A9A9A9;
+}
+
+.fab.sab-email
+{
+	background: #ab47bc;
+}
+
+
+.text-align-center
+{
+	text-align: center;
+}
+
+.invalid
+{
+	color: #f00 !important;
+}
+
+.invalid-feedback
+{
+	color: #f00 !important;
+}
+
+input.invalid
+{
+	border-color: #f00;
+}
