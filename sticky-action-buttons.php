@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: Sticky Action Buttons
- * Description: Add Floating Buttons on your website for Click to Chat with WhatsApp, FB Messenger, Send Mail and even Click to Call buttons
+ * Description: Add Floating Buttons on your website for Click to Chat with WhatsApp, Send Mail and even Click to Call buttons
  * Version: 1.0
  * Requires at least: 5.7
  * Requires PHP: 7.4
@@ -29,7 +29,7 @@ along with Sticky Action Buttons. If not, see https://www.gnu.org/licenses/gpl-3
 */
 
 if ( !function_exists( 'add_action' ) ) {
-	echo 'Hi there!  I\'m just a plugin, not much I can do when called directly.';
+	_e('Hi there!  I\'m just a plugin, not much I can do when called directly.');
 	exit;
 }
 
@@ -67,14 +67,12 @@ function sabs_uninstall()
 register_uninstall_hook( __FILE__, 'sabs_uninstall' );
 /* Plugin Uninstall Event */
 
-function register_session()
+function sabs_on_init()
 {
-    if(!session_id()) {
-        session_start();
-    }
+    //
 }
 
-add_action('init', 'register_session');
+add_action('init', 'sabs_on_init');
 
 function sabs_user_access_check()
 {
@@ -100,13 +98,12 @@ function sabs_options_page_form_submit()
     }
 
     if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
-        $sabs = $_POST['sabs'];
+        $sabs = isset($_POST['sabs']) && !empty($_POST['sabs']) ? $_POST['sabs'] : [];
 
-        $enabled = sanitize_text_field($sabs['enabled']);
-        $whatsAppNo = sanitize_text_field($sabs['whatsApp']);
-        $fb = sanitize_text_field($sabs['fb']);
-        $phone = sanitize_text_field($sabs['phone']);
-        $email = sanitize_text_field($sabs['email']);
+        $enabled = (isset($sabs['enabled']) && !empty($sabs['enabled']) ? sanitize_text_field($sabs['enabled']) : null);
+        $whatsAppNo = (isset($sabs['whatsApp']) && !empty($sabs['whatsApp']) ? sanitize_text_field($sabs['whatsApp']) : null);
+        $phone = (isset($sabs['phone']) && !empty($sabs['phone']) ? sanitize_text_field($sabs['phone']) : null);
+        $email = (isset($sabs['email']) && !empty($sabs['email']) ? sanitize_text_field($sabs['email']) : null);
 
         $sabsButtons = [];
         $errors = [];
@@ -116,14 +113,6 @@ function sabs_options_page_form_submit()
                 $sabsButtons['whatsApp'] = $whatsAppNo;
             } else {
                 $errors['whatsApp'] = "Invalid input";
-            }
-        }
-
-        if(!empty($fb)) {
-            if(preg_match("/^[A-Za-z\d.]{5,}$/", $fb)) {
-                $sabsButtons['fb'] = $fb;
-            } else {
-                $errors['fb'] = "Invalid input";
             }
         }
 
@@ -151,7 +140,11 @@ function sabs_options_page_form_submit()
             }
 
             update_option('sabs', $sabsOptions);
+
+            $_SESSION['saveSuccess'] = true;
         } else {
+            $_SESSION['invalidDataAlert'] = true;
+
             $_SESSION['sabsValidationErrors'] = $errors;
             $_SESSION['sabsOldFormData'] = $sabs;
         }

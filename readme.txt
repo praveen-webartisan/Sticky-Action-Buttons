@@ -4,7 +4,7 @@ Donate link: https://example.com/
 Tags: sticky action buttons, floating buttons, social link buttons, whatsapp button, facebook button, call button, email button
 Requires at least: 5.7
 Tested up to: 5.7
-Stable tag: 5.7
+Stable tag: 1.0
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
