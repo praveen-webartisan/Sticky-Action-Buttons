@@ -98,7 +98,7 @@ function sabs_options_page_form_submit()
     }
 
     if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
-        $sabs = isset($_POST['sabs']) && !empty($_POST['sabs']) ? $_POST['sabs'] : [];
+        $sabs = isset($_POST['sabs']) && !empty($_POST['sabs']) && is_array($_POST['sabs']) ? $_POST['sabs'] : [];
 
         $enabled = (isset($sabs['enabled']) && !empty($sabs['enabled']) ? sanitize_text_field($sabs['enabled']) : null);
         $whatsAppNo = (isset($sabs['whatsApp']) && !empty($sabs['whatsApp']) ? sanitize_text_field($sabs['whatsApp']) : null);
