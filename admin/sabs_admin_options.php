@@ -3,24 +3,24 @@
 
 	<?php
 		$currFabOptions = get_option('sabs');
-		$errors = isset($_SESSION['sabsValidationErrors']) && !empty($_SESSION['sabsValidationErrors']) ? $_SESSION['sabsValidationErrors'] : [];
-		$sabsOldFormData = isset($_SESSION['sabsOldFormData']) && !empty($_SESSION['sabsOldFormData']) ? $_SESSION['sabsOldFormData'] : [];
+		$errors = isset($_SESSION['sabsValidationErrors']) && !empty($_SESSION['sabsValidationErrors']) && is_array($_SESSION['sabsValidationErrors']) ? $_SESSION['sabsValidationErrors'] : [];
+		$sabsOldFormData = isset($_SESSION['sabsOldFormData']) && !empty($_SESSION['sabsOldFormData']) && is_array($_SESSION['sabsOldFormData']) ? $_SESSION['sabsOldFormData'] : [];
 
-		if(!empty($errors)) {
+		if(isset($_SESSION['sabsValidationErrors'])) {
 			unset($_SESSION['sabsValidationErrors']);
 		}
 
-		if(!empty($sabsOldFormData)) {
+		if(isset($_SESSION['sabsOldFormData'])) {
 			unset($_SESSION['sabsOldFormData']);
 		}
 
 		if(isset($_SESSION['saveSuccess'])) {
-			$saveSuccess = $_SESSION['saveSuccess'];
+			$saveSuccess = true;
 			unset($_SESSION['saveSuccess']);
 		}
 
 		if(isset($_SESSION['invalidDataAlert'])) {
-			$invalidDataAlert = $_SESSION['invalidDataAlert'];
+			$invalidDataAlert = true;
 			unset($_SESSION['invalidDataAlert']);
 		}
 	?>
