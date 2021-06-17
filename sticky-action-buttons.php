@@ -29,7 +29,7 @@ along with Sticky Action Buttons. If not, see https://www.gnu.org/licenses/gpl-3
 */
 
 if ( !function_exists( 'add_action' ) ) {
-	_e('Hi there!  I\'m just a plugin, not much I can do when called directly.');
+	echo esc_html('Hi there!  I\'m just a plugin, not much I can do when called directly.');
 	exit;
 }
 
@@ -83,6 +83,22 @@ function sabs_user_access_check()
 
 function sabs_admin_options_form()
 {
+    if(isset($_SESSION['sabsValidationErrors'])) {
+        extract($_SESSION['sabsValidationErrors']);
+    }
+
+    if(isset($_SESSION['sabsOldFormData'])) {
+        extract($_SESSION['sabsOldFormData']);
+    }
+
+    if(isset($_SESSION['saveSuccess'])) {
+        $saveSuccess = true;
+    }
+
+    if(isset($_SESSION['invalidDataAlert'])) {
+        $invalidDataAlert = true;
+    }
+
     require_once plugin_dir_path(__FILE__) . 'admin/sabs_admin_options.php';
 }
 
@@ -98,12 +114,10 @@ function sabs_options_page_form_submit()
     }
 
     if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
-        $sabs = isset($_POST['sabs']) && !empty($_POST['sabs']) && is_array($_POST['sabs']) ? $_POST['sabs'] : [];
-
-        $enabled = (isset($sabs['enabled']) && !empty($sabs['enabled']) ? sanitize_text_field($sabs['enabled']) : null);
-        $whatsAppNo = (isset($sabs['whatsApp']) && !empty($sabs['whatsApp']) ? sanitize_text_field($sabs['whatsApp']) : null);
-        $phone = (isset($sabs['phone']) && !empty($sabs['phone']) ? sanitize_text_field($sabs['phone']) : null);
-        $email = (isset($sabs['email']) && !empty($sabs['email']) ? sanitize_text_field($sabs['email']) : null);
+        $enabled = (isset($_POST['sabsEnabled']) && !empty($_POST['sabsEnabled']) ? sanitize_text_field($_POST['sabsEnabled']) : null);
+        $whatsAppNo = (isset($_POST['sabsWhatsApp']) && !empty($_POST['sabsWhatsApp']) ? sanitize_text_field($_POST['sabsWhatsApp']) : null);
+        $phone = (isset($_POST['sabsPhone']) && !empty($_POST['sabsPhone']) ? sanitize_text_field($_POST['sabsPhone']) : null);
+        $email = (isset($_POST['sabsEmail']) && !empty($_POST['sabsEmail']) ? sanitize_text_field($_POST['sabsEmail']) : null);
 
         $sabsButtons = [];
         $errors = [];
@@ -112,7 +126,7 @@ function sabs_options_page_form_submit()
             if(is_phone_no($whatsAppNo)) {
                 $sabsButtons['whatsApp'] = $whatsAppNo;
             } else {
-                $errors['whatsApp'] = "Invalid input";
+                $errors['errWhatsApp'] = "Invalid input";
             }
         }
 
@@ -120,7 +134,7 @@ function sabs_options_page_form_submit()
             if(is_phone_no($phone)) {
                 $sabsButtons['phone'] = $phone;
             } else {
-                $errors['phone'] = "Invalid input";
+                $errors['errPhone'] = "Invalid input";
             }
         }
 
@@ -128,7 +142,7 @@ function sabs_options_page_form_submit()
             if(is_email($email)) {
                 $sabsButtons['email'] = $email;
             } else {
-                $errors['email'] = "Invalid input";
+                $errors['errEmail'] = "Invalid input";
             }
         }
 
@@ -146,7 +160,12 @@ function sabs_options_page_form_submit()
             $_SESSION['invalidDataAlert'] = true;
 
             $_SESSION['sabsValidationErrors'] = $errors;
-            $_SESSION['sabsOldFormData'] = $sabs;
+            $_SESSION['sabsOldFormData'] = [
+                "oldEnabled" => $enabled,
+                "oldWhatsApp" => $whatsAppNo,
+                "oldPhone" => $phone,
+                "oldEmail" => $email,
+            ];
         }
     }
 }

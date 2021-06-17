@@ -3,35 +3,15 @@
 
 	<?php
 		$currFabOptions = get_option('sabs');
-		$errors = isset($_SESSION['sabsValidationErrors']) && !empty($_SESSION['sabsValidationErrors']) && is_array($_SESSION['sabsValidationErrors']) ? $_SESSION['sabsValidationErrors'] : [];
-		$sabsOldFormData = isset($_SESSION['sabsOldFormData']) && !empty($_SESSION['sabsOldFormData']) && is_array($_SESSION['sabsOldFormData']) ? $_SESSION['sabsOldFormData'] : [];
-
-		if(isset($_SESSION['sabsValidationErrors'])) {
-			unset($_SESSION['sabsValidationErrors']);
-		}
-
-		if(isset($_SESSION['sabsOldFormData'])) {
-			unset($_SESSION['sabsOldFormData']);
-		}
-
-		if(isset($_SESSION['saveSuccess'])) {
-			$saveSuccess = true;
-			unset($_SESSION['saveSuccess']);
-		}
-
-		if(isset($_SESSION['invalidDataAlert'])) {
-			$invalidDataAlert = true;
-			unset($_SESSION['invalidDataAlert']);
-		}
 	?>
 
 	<?php if(isset($saveSuccess)): ?>
 	<div class="notice notice-success is-dismissible">
-		<p><?php _e( 'All changes are saved!' ); ?></p>
+		<p><?php echo esc_html( 'All changes are saved!' ); ?></p>
 	</div>
 	<?php elseif(isset($invalidDataAlert)): ?>
 	<div class="notice notice-error is-dismissible">
-		<p><?php _e( 'Invalid data found. Please correct them all and continue.' ); ?></p>
+		<p><?php echo esc_html( 'Invalid data found. Please correct them all and continue.' ); ?></p>
 	</div>
 	<?php endif; ?>
 
@@ -43,7 +23,7 @@
 					<td colspan="2">
 						<fieldset>
 							<label for="sabs-enabled">
-								<input type="checkbox" name="sabs[enabled]" id="sabs-enabled" class="" value="yes" <?php if(($sabsOldFormData['enabled'] ?? ($currFabOptions['enabled'] ?? 'no')) == 'yes'): ?> checked <?php endif; ?>>
+								<input type="checkbox" name="sabsEnabled" id="sabs-enabled" class="" value="yes" <?php if((isset($oldEnabled) ? $oldEnabled : (isset($currFabOptions['enabled']) ? $currFabOptions['enabled'] : 'no')) == 'yes'): ?> checked <?php endif; ?>>
 								Enable the Buttons
 							</label>
 						</fieldset>
@@ -64,8 +44,8 @@
 					<td>
 						<fieldset>
 							<label for="sabs-whatsApp">
-								<input type="text" name="sabs[whatsApp]" id="sabs-whatsApp" class="<?php if(isset($errors['whatsApp'])): ?>invalid<?php endif; ?>" value="<?php _e($sabsOldFormData['whatsApp'] ?? ($currFabOptions['buttons']['whatsApp'] ?? '')); ?>" placeholder="Enter Your WhatsApp No">
-								<?php if(isset($errors['whatsApp'])): ?>
+								<input type="text" name="sabsWhatsApp" id="sabs-whatsApp" class="<?php if(isset($errWhatsApp)): ?>invalid<?php endif; ?>" value="<?php echo esc_attr(isset($oldWhatsApp) ? $oldWhatsApp :($currFabOptions['buttons']['whatsApp'] ?? '')); ?>" placeholder="Enter Your WhatsApp No">
+								<?php if(isset($errWhatsApp)): ?>
 									<span class="invalid"><i class="icofont-warning-alt"></i></span>
 								<?php endif; ?>
 							</label>
@@ -73,8 +53,8 @@
 						<p class="description">
 							<i class="icofont-info-circle"></i> Mobile number should be in the format: <code>[+][Country Code][Your 10 Digit Mobile Number]</code>.<br>For example: +919876543210 (Without any spaces)
 						</p>
-						<?php if(isset($errors['whatsApp'])): ?>
-						<p class="description invalid-feedback"><?php _e($errors['whatsApp']); ?></p>
+						<?php if(isset($errWhatsApp)): ?>
+						<p class="description invalid-feedback"><?php echo esc_html($errWhatsApp); ?></p>
 						<?php endif; ?>
 					</td>
 				</tr>
@@ -90,8 +70,8 @@
 					<td>
 						<fieldset>
 							<label for="sabs-phone">
-								<input type="text" name="sabs[phone]" id="sabs-phone" class="<?php if(isset($errors['phone'])): ?>invalid<?php endif; ?>" value="<?php _e($sabsOldFormData['phone'] ?? ($currFabOptions['buttons']['phone'] ?? '')); ?>" placeholder="Enter Your Phone Number">
-								<?php if(isset($errors['phone'])): ?>
+								<input type="text" name="sabsPhone" id="sabs-phone" class="<?php if(isset($errPhone)): ?>invalid<?php endif; ?>" value="<?php echo esc_attr(isset($oldPhone) ? $oldPhone : ($currFabOptions['buttons']['phone'] ?? '')); ?>" placeholder="Enter Your Phone Number">
+								<?php if(isset($errPhone)): ?>
 									<span class="invalid"><i class="icofont-warning-alt"></i></span>
 								<?php endif; ?>
 							</label>
@@ -99,8 +79,8 @@
 						<p class="description">
 							<i class="icofont-info-circle"></i> Mobile number should be in the format: <code>[+][Country Code][Your 10 Digit Mobile Number]</code>.<br>For example: +919876543210 (Without any spaces)
 						</p>
-						<?php if(isset($errors['phone'])): ?>
-						<p class="description invalid-feedback"><?php _e($errors['phone']); ?></p>
+						<?php if(isset($errPhone)): ?>
+						<p class="description invalid-feedback"><?php echo esc_html($errPhone); ?></p>
 						<?php endif; ?>
 					</td>
 				</tr>
@@ -116,14 +96,14 @@
 					<td>
 						<fieldset>
 							<label for="sabs-email">
-								<input type="email" name="sabs[email]" id="sabs-email" class="regular-text <?php if(isset($errors['email'])): ?>invalid<?php endif; ?>" value="<?php _e($sabsOldFormData['email'] ?? ($currFabOptions['buttons']['email'] ?? '')); ?>" placeholder="Enter Your E-mail Address">
-								<?php if(isset($errors['email'])): ?>
+								<input type="email" name="sabsEmail" id="sabs-email" class="regular-text <?php if(isset($errEmail)): ?>invalid<?php endif; ?>" value="<?php echo esc_attr(isset($oldEmail) ? $oldEmail : ($currFabOptions['buttons']['email'] ?? '')); ?>" placeholder="Enter Your E-mail Address">
+								<?php if(isset($errEmail)): ?>
 									<span class="invalid"><i class="icofont-warning-alt"></i></span>
 								<?php endif; ?>
 							</label>
 						</fieldset>
-						<?php if(isset($errors['email'])): ?>
-						<p class="description invalid-feedback"><?php _e($errors['email']); ?></p>
+						<?php if(isset($errEmail)): ?>
+						<p class="description invalid-feedback"><?php echo esc_html($errEmail); ?></p>
 						<?php endif; ?>
 					</td>
 				</tr>
