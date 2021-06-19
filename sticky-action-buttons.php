@@ -85,10 +85,24 @@ function sabs_admin_options_form()
 {
     if(isset($_SESSION['sabsValidationErrors'])) {
         extract($_SESSION['sabsValidationErrors']);
+
+        if(isset($_SESSION['sabsValidationErrors']['sabsCustom'])) {
+            wp_localize_script('sabs-admin-script', 'oldSabsCustomErrors', $_SESSION['sabsValidationErrors']['sabsCustom']);
+        }
     }
 
     if(isset($_SESSION['sabsOldFormData'])) {
         extract($_SESSION['sabsOldFormData']);
+
+        if(isset($_SESSION['sabsOldFormData']['oldSabsCustom'])) {
+            wp_localize_script('sabs-admin-script', 'oldSabsCustom', $_SESSION['sabsOldFormData']['oldSabsCustom']);
+        }
+    } else {
+        $currSabOptions = get_option('sabs');
+
+        if(isset($currSabOptions['customButtons']) && !empty($currSabOptions['customButtons'])) {
+            wp_localize_script('sabs-admin-script', 'currentCustomSabs', $currSabOptions['customButtons']);
+        }
     }
 
     if(isset($_SESSION['saveSuccess'])) {
@@ -102,6 +116,90 @@ function sabs_admin_options_form()
     require_once plugin_dir_path(__FILE__) . 'admin/sabs_admin_options.php';
 }
 
+function sabs_sanitize_custom_buttons_post_data($sabsCustom)
+{
+    $sabsCustom = !empty($sabsCustom) && is_array($sabsCustom) ? $sabsCustom : [];
+
+    $sabsCustom = array_map(function ($btnAttributes) {
+        return array_map('sanitize_text_field', $btnAttributes);
+    }, $sabsCustom);
+
+    return $sabsCustom;
+}
+
+function sabs_is_valid_color_code($colorCode)
+{
+    return preg_match('/^#(([0-9a-z]{6})|([0-9a-z]{8}))$/i', $colorCode);
+}
+
+function sabs_get_custom_button_action_type($action)
+{
+    $type = false;
+
+    // Check if action is URL
+    if(filter_var($action, FILTER_VALIDATE_URL) !== false) {
+        $type = 'link';
+    } else {
+        // Check if action is JavaScript function
+        if(preg_match('/^[\$a-z\_][0-9a-z\_\$]*$/i', $action)) {
+            $type = 'js-function';
+        } else {
+            // Check if action is any app Link
+            if(preg_match('/^[a-z]{3,}\:([a-z0-9\/\-\.\?\&\=\%\_\~\#\+])*$/i', $action)) {
+                $type = 'link';
+            }
+        }
+    }
+
+    return $type;
+}
+
+function sabs_validate_custom_button($customButton)
+{
+    $errors = [];
+
+    if(isset($customButton['bgColor']) && !empty($customButton['bgColor'])) {
+        if(!sabs_is_valid_color_code($customButton['bgColor'])) {
+            $errors['bgColor'] = 'Invalid Background Color';
+        }
+    } else {
+        $errors['bgColor'] = 'Invalid Background Color';
+    }
+
+    if(isset($customButton['color']) && !empty($customButton['color'])) {
+        if(!sabs_is_valid_color_code($customButton['color'])) {
+            $errors['color'] = 'Invalid Icon Color';
+        }
+    } else {
+        $errors['color'] = 'Invalid Icon Color';
+    }
+
+    if(isset($customButton['icon']) && !empty($customButton['icon'])) {
+        $classArray = explode(' ', $customButton['icon']);
+
+        // Should be only one Icon class
+        if(count($classArray) == 1) {
+            if(!preg_match('/^icofont\-[a-z\-]{2,}[a-z]$/', $classArray[0])) {
+                $errors['icon'] = 'Invalid Icon';
+            }
+        } else {
+            $errors['icon'] = 'Invalid Icon';
+        }
+    } else {
+        $errors['icon'] = 'Invalid Icon';
+    }
+
+    if(isset($customButton['action']) && !empty($customButton['action'])) {
+        if(sabs_get_custom_button_action_type($customButton['action']) == false) {
+            $errors['action'] = 'Invalid Action';
+        }
+    } else {
+        $errors['action'] = 'Invalid Action';
+    }
+
+    return $errors;
+}
+
 function sabs_options_page_form_submit()
 {
     sabs_user_access_check();
@@ -110,7 +208,7 @@ function sabs_options_page_form_submit()
 
     function is_phone_no($no)
     {
-        return preg_match("/^(\+)([1-9]{1,3})([0-9]{10})$/", $no);
+        return preg_match('/^(\+)([1-9]{1,3})([0-9]{10})$/', $no);
     }
 
     if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
@@ -118,6 +216,10 @@ function sabs_options_page_form_submit()
         $whatsAppNo = (isset($_POST['sabsWhatsApp']) && !empty($_POST['sabsWhatsApp']) ? sanitize_text_field($_POST['sabsWhatsApp']) : null);
         $phone = (isset($_POST['sabsPhone']) && !empty($_POST['sabsPhone']) ? sanitize_text_field($_POST['sabsPhone']) : null);
         $email = (isset($_POST['sabsEmail']) && !empty($_POST['sabsEmail']) ? sanitize_text_field($_POST['sabsEmail']) : null);
+        $sabsCustom = (isset($_POST['sabsCustom']) && !empty($_POST['sabsCustom']) && is_array($_POST['sabsCustom']) ? $_POST['sabsCustom'] : []);
+        $sabsCustom = sabs_sanitize_custom_buttons_post_data($sabsCustom);
+        $size = (isset($_POST['sabsSize']) && !empty($_POST['sabsSize']) ? sanitize_text_field($_POST['sabsSize']) : null);
+        $size = in_array($size, [1, 2, 3]) ? $size : 2;
 
         $sabsButtons = [];
         $errors = [];
@@ -126,7 +228,7 @@ function sabs_options_page_form_submit()
             if(is_phone_no($whatsAppNo)) {
                 $sabsButtons['whatsApp'] = $whatsAppNo;
             } else {
-                $errors['errWhatsApp'] = "Invalid input";
+                $errors['errWhatsApp'] = 'Invalid input';
             }
         }
 
@@ -134,7 +236,7 @@ function sabs_options_page_form_submit()
             if(is_phone_no($phone)) {
                 $sabsButtons['phone'] = $phone;
             } else {
-                $errors['errPhone'] = "Invalid input";
+                $errors['errPhone'] = 'Invalid input';
             }
         }
 
@@ -142,16 +244,39 @@ function sabs_options_page_form_submit()
             if(is_email($email)) {
                 $sabsButtons['email'] = $email;
             } else {
-                $errors['errEmail'] = "Invalid input";
+                $errors['errEmail'] = 'Invalid input';
+            }
+        }
+
+        if(!empty($sabsCustom)) {
+            foreach($sabsCustom as $sabsCustomIndex => $customButton) {
+                $sabsCustomValidationErr = sabs_validate_custom_button($customButton);
+
+                if(!empty($sabsCustomValidationErr)) {
+                    $errors['sabsCustom'][$sabsCustomIndex] = $sabsCustomValidationErr;
+                }
             }
         }
 
         if(empty($errors)) {
             $sabsOptions['buttons'] = $sabsButtons;
 
+            foreach($sabsCustom as $sabsCustomIndex => $customButton) {
+                $sabsOptions['customButtons'][] = [
+                    'bgColor' => $customButton['bgColor'],
+                    'color' => $customButton['color'],
+                    'icon' => $customButton['icon'],
+                    'action' => $customButton['action'],
+                    'actionType' => sabs_get_custom_button_action_type($customButton['action']),
+                    'withNotificationIcon' => isset($customButton['withNotificationIcon']) && !empty($customButton['withNotificationIcon']) ? 'yes' : 'no',
+                ];
+            }
+
             if(!empty($enabled) && $enabled == 'yes') {
                 $sabsOptions['enabled'] = 'yes';
             }
+
+            $sabsOptions['size'] = $size;
 
             update_option('sabs', $sabsOptions);
 
@@ -161,10 +286,11 @@ function sabs_options_page_form_submit()
 
             $_SESSION['sabsValidationErrors'] = $errors;
             $_SESSION['sabsOldFormData'] = [
-                "oldEnabled" => $enabled,
-                "oldWhatsApp" => $whatsAppNo,
-                "oldPhone" => $phone,
-                "oldEmail" => $email,
+                'oldEnabled' => $enabled,
+                'oldWhatsApp' => $whatsAppNo,
+                'oldPhone' => $phone,
+                'oldEmail' => $email,
+                'oldSabsCustom' => $sabsCustom,
             ];
         }
     }
@@ -199,6 +325,14 @@ function sabs_include_assets()
 {
     wp_enqueue_style('sabs-icons', plugins_url('css/icofont/icofont.min.css', __FILE__));
     wp_enqueue_style('sabs-css', plugins_url('css/style.css', __FILE__));
+
+    if(is_admin()) {
+        if(isset($_GET['page']) && $_GET['page'] == 'sabs-admin-options') {
+            wp_enqueue_style('wp-color-picker');
+
+            wp_enqueue_script('sabs-admin-script', plugins_url('js/admin-script.js', __FILE__), array('jquery', 'wp-color-picker'), false, true);
+        }
+    }
 }
 
 add_action('wp_enqueue_scripts', 'sabs_include_assets');
