@@ -20,8 +20,27 @@ Upload the Sticky Action Buttons plugin to your blog, activate it, and then navi
 
 That's it :)
 
+== Frequently Asked Questions ==
+
+= How to add Custom Buttons of my Choice? =
+
+Click `+ Add Custom Button` in the Plugin page to add Custom Buttons.
+
+= Can I adjust the Size of the Buttons? =
+
+Yes, There's a field called Size to adjust the size of the Buttons. This will be applied to all the Buttons.
+
+= How can I Hide the Default Buttons? =
+
+Just clear the Values of the Default Buttons to Hide them.
+
 == Screenshots ==
 
 1. Add your Phone Number & Email Address in the Admin Dashboard -> Stick Action Buttons and Save the Changes.
 
 2. Visit your Website, The Sticky Buttons will appear at the right side of all the Pages.
+
+== Changelog ==
+
+= 1.0 =
+Initial release with default Buttons: WhatsApp, Call, Mail

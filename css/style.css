@@ -4,9 +4,14 @@
 	right: 10px;
 	top: 50%;
 	transform: translateY(-50%);
-	display: flex;
+	display: flex !important;
 	flex-direction: column;
 	z-index: 100;
+}
+
+.sabs-container.sabs-hide-container
+{
+	display: none !important;
 }
 
 .sab
@@ -148,4 +153,119 @@ input.invalid
 .trCustomSabActionsContaienr > a.btnDeleteCustomSab
 {
 	color: #e53935;
+}
+
+.sabs-container.sabs-placement-top-left
+{
+	right: unset;
+	left: 10px;
+	top: 10px;
+	transform: translateY(0px);
+	flex-direction: column-reverse;
+}
+
+.sabs-container.sabs-placement-left
+{
+	right: unset;
+	left: 10px;
+}
+
+.sabs-container.sabs-placement-bottom-left
+{
+	right: unset;
+	left: 10px;
+	top: unset;
+	transform: translateY(0px);
+	bottom: 10px;
+}
+
+.sabs-container.sabs-placement-top-right
+{
+	top: 10px;
+	transform: translateY(0px);
+	flex-direction: column-reverse;
+}
+
+.sabs-container.sabs-placement-bottom-right
+{
+	top: unset;
+	transform: translateY(0px);
+	bottom: 10px;
+}
+
+.sabs-container.sabs-direction-horizontal
+{
+	flex-direction: row;
+}
+
+.sabs-container.sabs-placement-top-left > .sab:not(:last-child),
+.sabs-container.sabs-placement-top-right > .sab:not(:last-child)
+{
+	margin-bottom: unset;
+	margin-top: 10px;
+}
+
+.sabs-container.sabs-direction-horizontal.sabs-placement-left,
+.sabs-container.sabs-direction-horizontal.sabs-placement-top-left,
+.sabs-container.sabs-direction-horizontal.sabs-placement-bottom-left
+{
+	flex-direction: row-reverse;
+}
+
+.sabs-container.sabs-direction-horizontal > .sab:not(:last-child)
+{
+	margin-bottom: unset;
+	margin-top: unset;
+	margin-right: 10px;
+}
+
+.sabs-container.sabs-direction-horizontal.sabs-placement-left > .sab:not(:last-child),
+.sabs-container.sabs-direction-horizontal.sabs-placement-top-left > .sab:not(:last-child),
+.sabs-container.sabs-direction-horizontal.sabs-placement-bottom-left > .sab:not(:last-child)
+{
+	margin-bottom: unset;
+	margin-right: unset;
+	margin-left: 10px;
+}
+
+.sabs-container.sabs-view-mode-collapsible > .sab:not(.sab.sab-toggle-collapsible)
+{
+	display: none;
+	visibility: hidden;
+	opacity: 0;
+	transition: all 0.3s ease-in;
+	-webkit-transition: all 0.3s ease-in;
+	-moz-transition: all 0.3s ease-in;
+	-o-transition: all 0.3s ease-in;
+}
+
+.sabs-container.sabs-view-mode-collapsible > .sab-toggle-collapsible > .sab-ic-default
+{
+	display: inline-flex;
+}
+
+.sabs-container.sabs-view-mode-collapsible.sabs-collapsible-mode-click.sabs-collapsible-expanded > .sab-toggle-collapsible > .sab-ic-default
+{
+	display: none;
+}
+
+.sabs-container.sabs-view-mode-collapsible > .sab-toggle-collapsible > .sab-ic-on-shown
+{
+	display: none;
+}
+
+.sabs-container.sabs-view-mode-collapsible.sabs-collapsible-mode-click.sabs-collapsible-expanded > .sab-toggle-collapsible > .sab-ic-on-shown
+{
+	display: inline-flex;
+}
+
+.sabs-container.sabs-view-mode-collapsible.sabs-collapsible-expanded > .sab:not(.sab.sab-toggle-collapsible)
+{
+	display: inline-flex;
+}
+
+.sabs-container.sabs-view-mode-collapsible.sabs-collapsible-expanded > .sab.sab-collapsible-visible:not(.sab.sab-toggle-collapsible)
+{
+	visibility: visible;
+	opacity: 1;
 }
