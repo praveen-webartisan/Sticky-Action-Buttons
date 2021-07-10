@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Sticky Action Buttons
  * Description: Add Floating Buttons on your website for Click to Chat with WhatsApp, Send Mail and even Click to Call buttons
- * Version: 1.0
+ * Version: 1.1
  * Requires at least: 5.7
  * Requires PHP: 7.4
  * Author: Praveen Tamil

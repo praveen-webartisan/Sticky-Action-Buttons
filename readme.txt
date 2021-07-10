@@ -1,9 +1,9 @@
 === Sticky Action Buttons ===
 Contributors: praveentamil
-Tags: sticky action buttons, floating buttons, social link buttons, whatsapp button, call, email button
+Tags: sticky action buttons, floating buttons, social link buttons, whatsapp button, call, email button, notification button, support button
 Requires at least: 5.7
 Tested up to: 5.7
-Stable tag: 1.0
+Stable tag: 1.1
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -40,7 +40,16 @@ Just clear the Values of the Default Buttons to Hide them.
 
 2. Visit your Website, The Sticky Buttons will appear at the right side of all the Pages.
 
+3. Add Button of your choice using `+ Add Custom Button` option.
+
+4. Decide how the Buttons appear using the given provision to change Size, Direction, Placement, View mode and other options.
+
 == Changelog ==
 
 = 1.0 =
 Initial release with default Buttons: WhatsApp, Call, Mail
+
+= 1.1 =
+Add custom Buttons option implemented.
+Customization provisions to Change Size, Direction, Placement, View mode, Icons and Colors are implemented.
+Notification like option enabled to get the User attention 🤔.
